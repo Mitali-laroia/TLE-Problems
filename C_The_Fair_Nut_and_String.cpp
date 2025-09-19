@@ -1,0 +1,67 @@
+#include<bits/stdc++.h>
+#define int long long
+using namespace std;
+
+static const int N = 1e5;
+static const int P = 1e9+7;
+long long fact[N+1], inv_fact[N+1];
+
+long long binomial_exp(long long a, long long b) {
+    long long res = 1;
+    while(b>0) {
+        if(b&1) res = res*a%P;
+        a = a*a%P;
+        b >>= 1;
+    }
+    return res;
+}
+
+long long inv(long long num) {
+    return binomial_exp(num, P-2);
+}
+
+void calculate() {
+    fact[0] = 1;
+    for(int i=1; i<=N; i++) {
+        fact[i] = (fact[i-1]*i)%P;
+    } 
+    inv_fact[N] = inv(fact[N]);
+    for(int i=N-1; i>=0; i--) {
+        inv_fact[i] = (inv_fact[i+1]*(i+1))%P;
+    }
+}
+
+long long ncr(int n, int r) {
+    if (r < 0 || r > n) return 0; 
+    return fact[n]*inv_fact[n-r]%P*inv_fact[r]%P;
+}
+
+void solve(){
+    string s;
+    cin>>s;
+    int n = s.size();
+    int ans = 1;
+    string reducedString;
+    int count_a = 0;
+
+    for(int i=0;i<n;i++){
+        if(s[i]=='a' or s[i]=='b') reducedString+=s[i];
+    }
+
+    for(int i=0;i<reducedString.size();i++){
+        if(reducedString[i]=='a') count_a++;
+        else {
+            if(count_a>0) ans = ((ans%P)*((count_a+1)%P))%P;
+            count_a = 0;
+        }
+    }
+
+    if(count_a>0) ans = ((ans%P)*((count_a+1)%P))%P;
+    ans--;
+    cout<<ans<<"\n";
+}
+
+signed main(){
+    solve();
+    return 0;
+}
